@@ -1,7 +1,7 @@
-import NotFoundError from "../errors/NotFoundError.js";
+import {notFoundError} from "../errors/index.js";
 
 const handler = () => {
-    throw new NotFoundError();
+    throw notFoundError();
 }
 
 export default handler;

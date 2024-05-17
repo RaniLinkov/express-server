@@ -3,12 +3,11 @@ import speakeasy from "speakeasy";
 import qrcode from "qrcode";
 
 import config from "../../config/index.js";
-import TooManyAttemptsError from "../../errors/TooManyAttemptsError.js";
 import utils from "../../utils.js";
-import BadRequestError from "../../errors/BadRequestError.js";
 import db from "../../db/index.js";
 import mailer from "../../mailer/index.js";
 import {ERROR_MESSAGE} from "../../constants.js";
+import {badRequestError, tooManyAttemptsError} from "../../errors/index.js";
 
 const APP_NAME = "consolo";
 
@@ -33,7 +32,7 @@ const generateOtpCode = async (email, purpose) => {
 
     if (otp) {
         if (utils.time.now() < otp.expiresAt) {
-            throw new TooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
+            throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
         }
 
         await db.otps.delete({email, purpose});
@@ -61,12 +60,12 @@ const verifyOtpCode = async (email, code, purpose) => {
     const [otp] = await db.otps.read({email, purpose});
 
     if (!otp || utils.time.now() > otp.expiresAt || otp.failedAttempts > MFA_FAILED_ATTEMPTS_LIMIT) {
-        throw new BadRequestError(ERROR_MESSAGE.INVALID_OTP);
+        throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
     }
 
     if (await utils.encryption.compare(code, otp.code) !== true) {
         await db.otps.update({email: otp.email}, {failedAttempts: otp.failedAttempts + 1});
-        throw new BadRequestError(ERROR_MESSAGE.INVALID_OTP);
+        throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
     }
 
     await db.otps.delete({email: otp.email, purpose});
@@ -124,7 +123,7 @@ export default {
         code: {
             verify: async (user, code) => {
                 if (user.mfaLockedUntil && (user.mfaLockedUntil > utils.time.now())) {
-                    throw new TooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
+                    throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
                 }
 
                 if (speakeasy.totp.verify({secret: user.mfaSecret, encoding: BASE_32, token: code}) !== true) {
@@ -140,7 +139,7 @@ export default {
                         });
                     }
 
-                    throw new BadRequestError("Invalid code.");
+                    throw badRequestError("Invalid code.");
                 }
 
                 await db.users.update({userId: user.userId}, {
@@ -167,7 +166,7 @@ export default {
     password: {
         verify: async (user, password) => {
             if (user.passwordFailedAttempts >= PASSWORD_FAILED_ATTEMPTS_LIMIT) {
-                throw new TooManyAttemptsError("Too many failed attempts.");
+                throw tooManyAttemptsError("Too many failed attempts.");
             }
 
             if (await utils.encryption.compare(password, user.password) !== true) {
@@ -175,7 +174,7 @@ export default {
                     passwordFailedAttempts: user.passwordFailedAttempts + 1,
                     updatedAt: utils.time.now()
                 });
-                throw new BadRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
+                throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
             }
 
             await db.users.update({userId: user.userId}, {passwordFailedAttempts: 0, updatedAt: utils.time.now()});

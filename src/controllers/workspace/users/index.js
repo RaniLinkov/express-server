@@ -1,8 +1,7 @@
 import requestValidator from "../../../middleware/requestValidator.js";
 import utils from "../../../utils.js";
 import services from "../../../services/index.js";
-import BadRequestError from "../../../errors/BadRequestError.js";
-import ConflictError from "../../../errors/ConflictError.js";
+import {badRequestError, conflictError} from "../../../errors/index.js";
 
 export default {
     post: {
@@ -14,7 +13,7 @@ export default {
         }),
         handler: async (req, res) => {
             if (await services.userWorkspaceMapping.read(req.body.userId, req.workspaceId)) {
-                throw new ConflictError();
+                throw conflictError();
             }
 
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.create(req.body.userId, req.workspaceId, req.body.role);
@@ -45,7 +44,7 @@ export default {
         }),
         handler: async (req, res) => {
             if (!(await services.userWorkspaceMapping.read(req.body.userId, req.workspaceId))) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.update(req.params.userId, req.workspaceId, {role: req.body.role});
@@ -61,7 +60,7 @@ export default {
         }),
         handler: async (req, res) => {
             if (!(await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId))) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.delete(req.params.userId, req.workspaceId);

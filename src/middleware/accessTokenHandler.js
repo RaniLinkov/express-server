@@ -1,6 +1,6 @@
-import UnauthorizedError from "../errors/UnauthorizedError.js";
 import services from "../services/index.js";
 import {AUTHORIZATION_HEADER, ERROR_MESSAGE} from "../constants.js";
+import {unauthorizedError} from "../errors/index.js";
 
 const handler = async (req, res, next) => {
     const authorizationHeader = req.headers[AUTHORIZATION_HEADER];
@@ -8,13 +8,13 @@ const handler = async (req, res, next) => {
     const accessToken = authorizationHeader && authorizationHeader.split(" ")[1];
 
     if (!accessToken) {
-        throw new UnauthorizedError();
+        throw unauthorizedError();
     }
 
     const {payload, expired} = await services.auth.accessToken.verify(accessToken);
 
     if (null === payload || true === await services.sessions.isBlackListed(payload.sessionId)) {
-        throw new UnauthorizedError(expired ? ERROR_MESSAGE.EXPIRED_TOKEN : ERROR_MESSAGE.INVALID_TOKEN);
+        throw unauthorizedError(expired ? ERROR_MESSAGE.EXPIRED_TOKEN : ERROR_MESSAGE.INVALID_TOKEN);
     }
 
     req.userId = payload.userId;

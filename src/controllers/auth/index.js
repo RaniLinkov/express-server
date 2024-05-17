@@ -1,10 +1,8 @@
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import services from "../../services/index.js";
-import BadRequestError from "../../errors/BadRequestError.js";
-import UnauthorizedError from "../../errors/UnauthorizedError.js";
 import {ERROR_MESSAGE} from "../../constants.js";
-import ForbiddenError from "../../errors/ForbiddenError.js";
+import {badRequestError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 
 const terminateUserSession = async (userId) => {
     const [session] = await services.sessions.read(undefined, userId);
@@ -45,7 +43,7 @@ export default {
             const [user] = await services.users.read(undefined, req.body.email);
 
             if (user) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             await services.users.create(req.body.email, req.body.password, req.body.name);
@@ -64,11 +62,11 @@ export default {
             const [user] = await services.users.read(undefined, req.body.email);
 
             if (!user) {
-                throw new BadRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
+                throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
             }
 
             if (user.verified !== true) {
-                throw new ForbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
+                throw forbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
             }
 
             await services.auth.password.verify(user, req.body.password);
@@ -95,19 +93,19 @@ export default {
                 const refreshToken = req.cookies["refreshToken"];
 
                 if (!refreshToken) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 const {payload} = await services.auth.refreshToken.verify(refreshToken);
 
                 if (null === payload || true === await services.sessions.isBlackListed(payload.sessionId)) {
-                    throw new UnauthorizedError();
+                    throw unauthorizedError();
                 }
 
                 const [session] = await services.sessions.read(payload.sessionId);
 
                 if (!session) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 res.items({
@@ -131,7 +129,7 @@ export default {
                 const [user] = await services.users.read(undefined, req.body.email);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (true === user.verified) {
@@ -160,7 +158,7 @@ export default {
                 const [user] = await services.users.read(undefined, req.body.email);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (true === user.verified) {
@@ -187,7 +185,7 @@ export default {
                     const [user] = await services.users.read(undefined, req.body.email);
 
                     if (!user) {
-                        throw new BadRequestError();
+                        throw badRequestError();
                     }
 
                     const code = await services.auth.password.generateVerificationCode(req.body.email);
@@ -213,7 +211,7 @@ export default {
                     const [user] = await services.users.read(undefined, req.body.email);
 
                     if (!user) {
-                        throw new BadRequestError();
+                        throw badRequestError();
                     }
 
                     if (true === user.verified) {
@@ -240,15 +238,15 @@ export default {
                 const [user] = await services.users.read(req.userId, undefined);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (user.verified !== true) {
-                    throw new ForbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
+                    throw forbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
                 }
 
                 if (user.mfaEnabled !== true) {
-                    throw new BadRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
+                    throw badRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
                 }
 
                 await services.auth.mfa.code.verify(user, req.body.code);

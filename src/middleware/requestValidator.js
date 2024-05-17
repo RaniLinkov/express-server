@@ -1,5 +1,5 @@
-import BadRequestError from "../errors/BadRequestError.js";
 import utils from "../utils.js";
+import {badRequestError} from "../errors/index.js";
 
 const handler = (schema = {}) =>
     (req, res, next) => {
@@ -10,7 +10,7 @@ const handler = (schema = {}) =>
         });
 
         if (error) {
-            throw new BadRequestError(error.message);
+            throw badRequestError(error.message);
         }
 
         next();

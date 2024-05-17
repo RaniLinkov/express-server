@@ -1,8 +1,8 @@
 import services from "../../services/index.js";
-import BadRequestError from "../../errors/BadRequestError.js";
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import {ERROR_MESSAGE} from "../../constants.js";
+import {badRequestError} from "../../errors/index.js";
 
 export default {
     get: {
@@ -10,7 +10,7 @@ export default {
             const [user] = await services.users.read(req.userId, undefined);
 
             if (!user) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             return res.items({
@@ -28,7 +28,7 @@ export default {
         }),
         handler: async (req, res) => {
             if (!(await services.users.read(req.userId, undefined))) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             const [user] = await services.users.update(req.userId, {name: req.body.name});
@@ -52,11 +52,11 @@ export default {
                 const [user] = await services.users.read(req.userId, undefined);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (await services.auth.password.verify(user, req.body.currentPassword) !== true) {
-                    throw BadRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
+                    throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
                 }
 
                 await services.users.update(req.userId, {password: req.body.newPassword, passwordFailedAttempts: 0});
@@ -85,15 +85,15 @@ export default {
                 const [user] = await services.users.read(req.userId, undefined);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (user.mfaEnabled) {
-                    throw BadRequestError("already enabled.");
+                    throw badRequestError("already enabled.");
                 }
 
                 if (await services.auth.mfa.code.verify(user.mfaSecret, req.body.code) !== true) {
-                    throw BadRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
+                    throw badRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
                 }
 
                 await services.users.update(req.userId, {mfaEnabled: true});
@@ -111,15 +111,15 @@ export default {
                 const [user] = await services.users.read(req.userId, undefined);
 
                 if (!user) {
-                    throw new BadRequestError();
+                    throw badRequestError();
                 }
 
                 if (user.mfaEnabled !== true) {
-                    throw new BadRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
+                    throw badRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
                 }
 
                 if (await services.auth.mfa.code.verify(user.mfaSecret, req.body.code) !== true) {
-                    throw new BadRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
+                    throw badRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
                 }
 
                 await services.users.update(req.userId, {mfaEnabled: false, mfaSecret: null});

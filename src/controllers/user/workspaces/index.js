@@ -2,8 +2,7 @@ import requestValidator from "../../../middleware/requestValidator.js";
 import utils from "../../../utils.js";
 import services from "../../../services/index.js";
 import {USER_ROLE} from "../../../constants.js";
-import ForbiddenError from "../../../errors/ForbiddenError.js";
-import BadRequestError from "../../../errors/BadRequestError.js";
+import {badRequestError, forbiddenError} from "../../../errors/index.js";
 
 export default {
     post: {
@@ -45,11 +44,11 @@ export default {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);
 
             if (!userWorkspaceMapping) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             if (userWorkspaceMapping.role !== USER_ROLE.ADMIN) {
-                throw new ForbiddenError();
+                throw forbiddenError();
             }
 
             const [workspace] = await services.workspaces.update(req.params.workspaceId, {name: req.body.name});
@@ -67,11 +66,11 @@ export default {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);
 
             if (!userWorkspaceMapping) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             if (userWorkspaceMapping.role !== USER_ROLE.ADMIN) {
-                throw new ForbiddenError();
+                throw forbiddenError();
             }
 
             await services.userWorkspaceMapping.delete(undefined, req.params.workspaceId);
@@ -90,7 +89,7 @@ export default {
             const [userWorkspace] = await services.userWorkspaceMapping.readUserWorkspaces(req.userId, req.params.workspaceId);
 
             if (!userWorkspace) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             await services.userWorkspaceMapping.delete(req.userId, req.params.workspaceId);
@@ -108,7 +107,7 @@ export default {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);
 
             if (!userWorkspaceMapping) {
-                throw new BadRequestError();
+                throw badRequestError();
             }
 
             return res

@@ -1,16 +1,15 @@
 import services from "../services/index.js";
-import BadRequestError from "../errors/BadRequestError.js";
-import ForbiddenError from "../errors/ForbiddenError.js";
+import {badRequestError, forbiddenError} from "../errors/index.js";
 
 const handler = async (req, res, next) => {
     if (!req.workspaceId) {
-        throw new BadRequestError("Missing WorkspaceId.");
+        throw badRequestError("Missing WorkspaceId.");
     }
 
     const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.workspaceId);
 
     if (!userWorkspaceMapping) {
-        throw new ForbiddenError();
+        throw forbiddenError();
     }
 
     req.role = userWorkspaceMapping.role;
