@@ -4,18 +4,17 @@ const router = express.Router();
 
 import users from "../../../controllers/workspace/users/index.js";
 
-router.get('/',
-    users.get.handler
-);
-
-router.get('/:userId',
-    users.get.validator,
-    users.get.handler
-);
-
 router.post('/',
     users.post.validator,
     users.post.handler
+);
+
+router.get('/',
+    users.get.handler
+);
+router.get('/:userId',
+    users.get.validator,
+    users.get.handler
 );
 
 router.put('/:userId',
