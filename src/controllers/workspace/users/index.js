@@ -7,18 +7,18 @@ export default {
     post: {
         validator: requestValidator({
             body: utils.joi.object({
-                userId: utils.joi.schemas.user.userId.required(),
+                email: utils.joi.schemas.user.email.required(),
                 role: utils.joi.schemas.userWorkspaceMapping.role.required(),
             }),
         }),
         handler: async (req, res) => {
-            if (await services.userWorkspaceMapping.read(req.body.userId, req.workspaceId)) {
-                throw conflictError();
+            const [user] = await services.users.read(undefined, req.body.email);
+
+            if (user && 0 === (await services.userWorkspaceMapping.read(user.userId, req.workspaceId)).length) {
+                await services.userWorkspaceMapping.create(user.userId, req.workspaceId, req.body.role);
             }
 
-            const [userWorkspaceMapping] = await services.userWorkspaceMapping.create(req.body.userId, req.workspaceId, req.body.role);
-
-            res.items(userWorkspaceMapping);
+            res.items();
         }
     },
     get: {
