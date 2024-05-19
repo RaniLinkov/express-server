@@ -5,7 +5,7 @@ const handler = (err, req, res, _) => {
         res.status(err.statusCode).json({message: err.message});
     } else {
         req.logger.error('Unexpected error:', err);
-        res.status(ERROR_CODE.NOT_FOUND).json({message: 'Something went wrong'});
+        res.status(ERROR_CODE.INTERNAL_SERVER_ERROR).json({message: 'Something went wrong'});
     }
 }
 
