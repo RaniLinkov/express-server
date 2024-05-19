@@ -216,7 +216,7 @@ export default {
 
                     await services.auth.password.reset.verify(req.body.email, req.body.code);
 
-                    await services.users.update(user.userId, {verified: true, password: req.body.password});
+                    await services.users.update(user.userId, {passwordFailedAttempts: 0, password: req.body.password});
 
                     res.items();
                 }
