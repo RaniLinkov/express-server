@@ -1,3 +1,5 @@
+import {REFRESH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE_MAX_AGE} from "../constants.js";
+
 const handler = (req, res, next) => {
     res.items = (items = []) =>
         res.json({
@@ -5,8 +7,8 @@ const handler = (req, res, next) => {
         });
 
     res.refreshTokenCookie = (token) =>
-        res.cookie("refreshToken", token, {
-            maxAge: 3.154e10,
+        res.cookie(REFRESH_TOKEN_COOKIE, token, {
+            maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
             httpOnly: true,
             secure: true
         });

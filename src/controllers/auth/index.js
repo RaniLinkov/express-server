@@ -1,7 +1,7 @@
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import services from "../../services/index.js";
-import {ERROR_MESSAGE} from "../../constants.js";
+import {ERROR_MESSAGE, REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 
 const terminateUserSession = async (userId) => {
@@ -90,7 +90,7 @@ export default {
     token: {
         get: {
             handler: async (req, res) => {
-                const refreshToken = req.cookies["refreshToken"];
+                const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE];
 
                 if (!refreshToken) {
                     throw badRequestError();
