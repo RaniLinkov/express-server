@@ -188,7 +188,7 @@ export default {
                         throw badRequestError();
                     }
 
-                    const code = await services.auth.password.generateVerificationCode(req.body.email);
+                    const code = await services.auth.password.reset.generateVerificationCode(req.body.email);
 
                     services.auth.password.reset.sendVerificationEmail(req.body.email, code).then(() => {
                         req.logger.info(`Password reset code sent to ${req.body.email}`);
@@ -212,10 +212,6 @@ export default {
 
                     if (!user) {
                         throw badRequestError();
-                    }
-
-                    if (true === user.verified) {
-                        return res.items();
                     }
 
                     await services.auth.password.reset.verify(req.body.email, req.body.code);
