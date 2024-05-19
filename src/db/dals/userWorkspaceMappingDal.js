@@ -11,6 +11,9 @@ export const initUserWorkspaceMappingDal = (knex) => {
         read: (filter) => {
             return baseDal.read(filter);
         },
+        update: (filter, data) => {
+            return baseDal.update(filter, data);
+        },
         delete: (filter) => {
             return baseDal.delete(filter);
         },
