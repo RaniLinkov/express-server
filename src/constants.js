@@ -28,6 +28,7 @@ export const ERROR_MESSAGE = {
     CONFLICT: 'Conflict.',
     TOO_MANY_ATTEMPTS: 'Too many attempts.',
     INTERNAL_SERVER_ERROR: 'Internal server error.',
+    SOMETHING_WENT_WRONG: 'Something went wrong.',
     INVALID_EMAIL_OR_PASSWORD: 'Invalid email or password.',
     EMAIL_ALREADY_EXISTS: 'Email already exists.',
     INVALID_TOKEN: 'Invalid token.',
