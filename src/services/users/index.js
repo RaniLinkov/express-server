@@ -29,9 +29,9 @@ export default {
 
         return db.users.read(filter);
     },
-    update: (userId, data) => {
+    update: async (userId, data) => {
         if (data.password) {
-            data.password = utils.encryption.hash(data.password);
+            data.password = await utils.encryption.hash(data.password);
         }
 
         data.updatedAt = utils.time.now();

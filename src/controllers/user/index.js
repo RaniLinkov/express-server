@@ -92,11 +92,9 @@ export default {
                     throw badRequestError("already enabled.");
                 }
 
-                if (await services.auth.mfa.code.verify(user.mfaSecret, req.body.code) !== true) {
-                    throw badRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
-                }
+                await services.auth.mfa.code.verify(user, req.body.code);
 
-                await services.users.update(req.userId, {mfaEnabled: true});
+                await services.users.update(req.userId, {mfaEnabled: true, mfaFailedAttempts: 0});
 
                 res.items();
             }
@@ -118,9 +116,7 @@ export default {
                     throw badRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
                 }
 
-                if (await services.auth.mfa.code.verify(user.mfaSecret, req.body.code) !== true) {
-                    throw badRequestError(ERROR_MESSAGE.INVALID_MFA_TOKEN);
-                }
+                await services.auth.mfa.code.verify(user, req.body.code);
 
                 await services.users.update(req.userId, {mfaEnabled: false, mfaSecret: null});
 

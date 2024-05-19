@@ -114,7 +114,6 @@ export default {
         accessToken: {
             sign: (payload) =>
                 jwt.sign(payload, config.MFA_SECRET, {
-                    algorithm: RS256,
                     expiresIn: MFA_ACCESS_TOKEN_EXPIRES_IN,
                 }),
             verify: (token) =>
@@ -127,17 +126,13 @@ export default {
                 }
 
                 if (speakeasy.totp.verify({secret: user.mfaSecret, encoding: BASE_32, token: code}) !== true) {
-                    await db.users.update({userId: user.userId}, {
-                        mfaFailedAttempts: user.mfaFailedAttempts + 1,
-                        updatedAt: utils.time.now()
-                    });
+                    const mfaFailedAttempts = user.mfaFailedAttempts + 1;
 
-                    if (user.mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT) {
-                        await db.users.update({userId: user.userId}, {
-                            mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES),
-                            updatedAt: utils.time.now()
-                        });
-                    }
+                    await db.users.update({userId: user.userId}, {
+                        mfaFailedAttempts,
+                        updatedAt: utils.time.now(),
+                        ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT ? {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)} : {})
+                    });
 
                     throw badRequestError("Invalid code.");
                 }
