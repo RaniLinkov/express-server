@@ -3,8 +3,8 @@ import UnauthorizedError from "./UnauthorizedError.js";
 import ForbiddenError from "./ForbiddenError.js";
 import NotFoundError from "./NotFoundError.js";
 import ConflictError from "./ConflictError.js";
-import InternalServerError from "./InternalServerError.js";
 import TooManyAttemptsError from "./TooManyAttemptsError.js";
+import InternalServerError from "./InternalServerError.js";
 
 export const badRequestError = (message) => new BadRequestError(message);
 export const unauthorizedError = (message) => new UnauthorizedError(message);
