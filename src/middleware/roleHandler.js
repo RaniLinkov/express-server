@@ -1,7 +1,7 @@
 import {forbiddenError} from "../errors/index.js";
 
 const handler = (allowedRoles = []) => (req, res, next) => {
-    if (!req.role || allowedRoles.includes(req.role) !== true) {
+    if (!req.role || true !== allowedRoles.includes(req.role)) {
         throw forbiddenError();
     }
 
