@@ -41,4 +41,7 @@ export const ERROR_MESSAGE = {
     INVALID_MFA_TOKEN: 'Invalid MFA token.',
     INVALID_OTP: 'Invalid OTP.',
     TRY_AGAIN_LATER: 'Please try again later.',
+    ALREADY_ENABLED: 'already enabled.',
+    INVALID_CODE: 'Invalid code.',
+    MISSING_WORKSPACE_ID: 'Missing WorkspaceId.',
 };

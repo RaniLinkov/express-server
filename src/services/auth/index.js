@@ -134,7 +134,7 @@ export default {
                         ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT ? {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)} : {})
                     });
 
-                    throw badRequestError("Invalid code.");
+                    throw badRequestError(ERROR_MESSAGE.INVALID_CODE);
                 }
 
                 await db.users.update({userId: user.userId}, {
@@ -161,7 +161,7 @@ export default {
     password: {
         verify: async (user, password) => {
             if (user.passwordFailedAttempts >= PASSWORD_FAILED_ATTEMPTS_LIMIT) {
-                throw tooManyAttemptsError("Too many failed attempts.");
+                throw tooManyAttemptsError();
             }
 
             if (await utils.encryption.compare(password, user.password) !== true) {

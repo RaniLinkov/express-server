@@ -1,9 +1,10 @@
 import services from "../services/index.js";
 import {badRequestError, forbiddenError} from "../errors/index.js";
+import {ERROR_MESSAGE} from "../constants.js";
 
 const handler = async (req, res, next) => {
     if (!req.workspaceId) {
-        throw badRequestError("Missing WorkspaceId.");
+        throw badRequestError(ERROR_MESSAGE.MISSING_WORKSPACE_ID);
     }
 
     const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.workspaceId);

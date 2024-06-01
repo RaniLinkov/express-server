@@ -89,7 +89,7 @@ export default {
                 }
 
                 if (user.mfaEnabled) {
-                    throw badRequestError("already enabled.");
+                    throw badRequestError(ERROR_MESSAGE.ALREADY_ENABLED);
                 }
 
                 await services.auth.mfa.code.verify(user, req.body.code);
