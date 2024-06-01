@@ -72,7 +72,7 @@ export default {
             await services.auth.password.verify(user, req.body.password);
 
             if (user.mfaEnabled === true) {
-                return res.items({
+                res.items({
                     mfaAccessToken: await services.auth.mfa.accessToken.sign({userId: user.userId})
                 });
             } else {
@@ -132,17 +132,15 @@ export default {
                     throw badRequestError();
                 }
 
-                if (true === user.verified) {
-                    return res.items();
+                if (true !== user.verified) {
+                    const code = await services.auth.email.generateVerificationCode(req.body.email);
+
+                    services.auth.email.sendVerificationEmail(req.body.email, code).then(() => {
+                        req.logger.info(`Email verification code sent to ${req.body.email}`);
+                    }).catch((error) => {
+                        req.logger.error(`Failed to send email verification code to ${req.body.email}: ${error.message}`);
+                    });
                 }
-
-                const code = await services.auth.email.generateVerificationCode(req.body.email);
-
-                services.auth.email.sendVerificationEmail(req.body.email, code).then(() => {
-                    req.logger.info(`Email verification code sent to ${req.body.email}`);
-                }).catch((error) => {
-                    req.logger.error(`Failed to send email verification code to ${req.body.email}: ${error.message}`);
-                });
 
                 res.items();
             }
@@ -161,13 +159,11 @@ export default {
                     throw badRequestError();
                 }
 
-                if (true === user.verified) {
-                    return res.items();
+                if (true !== user.verified) {
+                    await services.auth.email.verify(req.body.email, req.body.code);
+                    await services.users.update(user.userId, {verified: true});
+
                 }
-
-                await services.auth.email.verify(req.body.email, req.body.code);
-
-                await services.users.update(user.userId, {verified: true});
 
                 res.items();
             }
