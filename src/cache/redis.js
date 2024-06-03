@@ -1,3 +1,5 @@
+"use strict";
+
 import {createClient} from 'redis';
 
 export const initCache = (options) => {

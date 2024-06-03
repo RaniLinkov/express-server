@@ -1,3 +1,5 @@
+"use strict";
+
 import cors from 'cors';
 import config from '../config/index.js';
 

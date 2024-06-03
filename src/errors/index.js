@@ -1,3 +1,5 @@
+"use strict";
+
 import BadRequestError from "./BadRequestError.js";
 import UnauthorizedError from "./UnauthorizedError.js";
 import ForbiddenError from "./ForbiddenError.js";

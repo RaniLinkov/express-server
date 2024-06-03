@@ -1,3 +1,5 @@
+"use strict";
+
 import utils from "../utils.js";
 import {badRequestError} from "../errors/index.js";
 

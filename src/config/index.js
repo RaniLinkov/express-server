@@ -1,3 +1,5 @@
+"use strict";
+
 import {EMPTY_STRING} from "../constants.js";
 
 const getEnvVariable = (key, defaultValue = undefined) => {

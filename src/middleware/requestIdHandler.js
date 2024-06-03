@@ -1,3 +1,5 @@
+"use strict";
+
 import utils from "../utils.js";
 
 const handler = (req, res, next) => {

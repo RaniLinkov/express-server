@@ -1,3 +1,5 @@
+"use strict";
+
 import logger from "../logger/index.js";
 
 const handler = (req, res, next) => {

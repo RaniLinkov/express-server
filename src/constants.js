@@ -1,3 +1,5 @@
+"use strict";
+
 export const TRUE_STRING = 'true';
 
 export const EMPTY_STRING = '';

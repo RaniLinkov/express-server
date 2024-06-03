@@ -1,3 +1,5 @@
+"use strict";
+
 import {initDb} from './knex.js';
 import config from '../config/index.js';
 import {initUsersDal} from "./dals/usersDal.js";

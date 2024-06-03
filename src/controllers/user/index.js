@@ -1,3 +1,5 @@
+"use strict";
+
 import services from "../../services/index.js";
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";

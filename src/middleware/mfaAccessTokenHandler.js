@@ -1,3 +1,5 @@
+"use strict";
+
 import services from "../services/index.js";
 import {AUTHORIZATION_HEADER, ERROR_MESSAGE} from "../constants.js";
 import {unauthorizedError} from "../errors/index.js";

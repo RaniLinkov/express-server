@@ -1,3 +1,5 @@
+"use strict";
+
 import {initMailer} from "./nodemailer.js";
 import config from "../config/index.js";
 

@@ -1,3 +1,5 @@
+"use strict";
+
 import {initLogger} from "./winston.js";
 import config from "../config/index.js";
 

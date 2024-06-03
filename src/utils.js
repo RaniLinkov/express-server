@@ -1,3 +1,5 @@
+"use strict";
+
 import Joi from 'joi';
 import {randomUUID, randomInt} from "crypto";
 import bcrypt from "bcrypt";

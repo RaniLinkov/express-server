@@ -1,3 +1,5 @@
+"use strict";
+
 import {initCache} from "./redis.js";
 import config from "../config/index.js";
 

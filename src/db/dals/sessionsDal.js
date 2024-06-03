@@ -1,3 +1,5 @@
+"use strict";
+
 import {initBaseDal} from './baseDal.js';
 import {TABLES} from "../constants.js";
 

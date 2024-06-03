@@ -1,3 +1,5 @@
+"use strict";
+
 export const initBaseDal = (knex, tableName) => {
     return {
         create: (data) => {

@@ -1,3 +1,5 @@
+"use strict";
+
 import {REFRESH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE_MAX_AGE} from "../constants.js";
 
 const handler = (req, res, next) => {

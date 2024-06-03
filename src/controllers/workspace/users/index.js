@@ -1,7 +1,9 @@
+"use strict";
+
 import requestValidator from "../../../middleware/requestValidator.js";
 import utils from "../../../utils.js";
 import services from "../../../services/index.js";
-import {badRequestError, conflictError} from "../../../errors/index.js";
+import {badRequestError} from "../../../errors/index.js";
 
 export default {
     post: {

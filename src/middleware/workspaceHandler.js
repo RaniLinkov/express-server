@@ -1,3 +1,5 @@
+"use strict";
+
 import services from "../services/index.js";
 import {badRequestError, forbiddenError} from "../errors/index.js";
 import {ERROR_MESSAGE} from "../constants.js";

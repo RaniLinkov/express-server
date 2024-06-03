@@ -1,3 +1,5 @@
+"use strict";
+
 import {EMPTY_STRING} from "../constants.js";
 
 class BaseError extends Error {
