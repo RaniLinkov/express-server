@@ -6,8 +6,8 @@ import config from "../../config/index.js";
 import utils from "../../utils.js";
 import db from "../../db/index.js";
 import mailer from "../../mailer/index.js";
-import {ERROR_MESSAGE} from "../../constants.js";
 import {badRequestError, tooManyAttemptsError} from "../../errors/index.js";
+import {ERROR_MESSAGE} from "../../errors/constants.js";
 
 const APP_NAME = "app name";
 

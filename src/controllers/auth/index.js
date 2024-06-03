@@ -3,7 +3,7 @@
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import services from "../../services/index.js";
-import {ERROR_MESSAGE, REFRESH_TOKEN_COOKIE} from "../../constants.js";
+import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 
 const terminateUserSession = async (userId) => {

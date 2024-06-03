@@ -1,8 +1,9 @@
 "use strict";
 
 import services from "../services/index.js";
-import {AUTHORIZATION_HEADER, ERROR_MESSAGE} from "../constants.js";
+import {AUTHORIZATION_HEADER} from "../constants.js";
 import {unauthorizedError} from "../errors/index.js";
+import {ERROR_MESSAGE} from "../errors/constants.js";
 
 const handler = async (req, res, next) => {
     const authorizationHeader = req.headers[AUTHORIZATION_HEADER];

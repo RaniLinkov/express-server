@@ -2,7 +2,7 @@
 
 import services from "../services/index.js";
 import {badRequestError, forbiddenError} from "../errors/index.js";
-import {ERROR_MESSAGE} from "../constants.js";
+import {ERROR_MESSAGE} from "../errors/constants.js";
 
 const handler = async (req, res, next) => {
     if (!req.workspaceId) {

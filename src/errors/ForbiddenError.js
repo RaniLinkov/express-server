@@ -1,7 +1,7 @@
 "use strict";
 
 import BaseError from "./BaseError.js";
-import {ERROR_CODE, ERROR_MESSAGE} from "../constants.js";
+import {ERROR_CODE, ERROR_MESSAGE} from "./constants.js";
 
 class ForbiddenError extends BaseError {
     constructor(message = ERROR_MESSAGE.FORBIDDEN) {

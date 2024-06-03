@@ -3,8 +3,8 @@
 import services from "../../services/index.js";
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
-import {ERROR_MESSAGE} from "../../constants.js";
 import {badRequestError} from "../../errors/index.js";
+import {ERROR_MESSAGE} from "../../errors/constants.js";
 
 export default {
     get: {

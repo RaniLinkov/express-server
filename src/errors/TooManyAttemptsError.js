@@ -1,7 +1,7 @@
 "use strict";
 
 import BaseError from "./BaseError.js";
-import {ERROR_CODE, ERROR_MESSAGE} from "../constants.js";
+import {ERROR_CODE, ERROR_MESSAGE} from "./constants.js";
 
 class TooManyAttemptsError extends BaseError {
     constructor(message = ERROR_MESSAGE.TOO_MANY_ATTEMPTS) {

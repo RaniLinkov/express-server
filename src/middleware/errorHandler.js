@@ -1,6 +1,7 @@
 "use strict";
 
-import {ERROR_CODE, ERROR_MESSAGE} from "../constants.js";
+
+import {ERROR_CODE, ERROR_MESSAGE} from "../errors/constants.js";
 
 const handler = (err, req, res, _) => {
     if (err.isOperational) {
