@@ -1,7 +1,7 @@
-import {randomUUID} from "crypto";
+import utils from "../utils.js";
 
 const handler = (req, res, next) => {
-    const requestId = randomUUID();
+    const requestId = utils.uuid.v4();
 
     req.requestId = requestId;
     res.set("X-Request-Id", requestId);
