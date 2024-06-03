@@ -65,7 +65,7 @@ export default {
                 throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
             }
 
-            if (user.verified !== true) {
+            if (true !== user.verified) {
                 throw forbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
             }
 
@@ -233,11 +233,11 @@ export default {
                     throw badRequestError();
                 }
 
-                if (user.verified !== true) {
+                if (true !== user.verified) {
                     throw forbiddenError(ERROR_MESSAGE.USER_NOT_VERIFIED);
                 }
 
-                if (user.mfaEnabled !== true) {
+                if (true !== user.mfaEnabled) {
                     throw badRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
                 }
 

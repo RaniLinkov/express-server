@@ -55,13 +55,11 @@ export default {
                     throw badRequestError();
                 }
 
-                if (await services.auth.password.verify(user, req.body.currentPassword) !== true) {
-                    throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
-                }
+                await services.auth.password.verify(user, req.body.currentPassword);
 
                 await services.users.update(req.userId, {password: req.body.newPassword, passwordFailedAttempts: 0});
 
-                return res.items();
+                res.items();
             }
         }
     },
@@ -112,7 +110,7 @@ export default {
                     throw badRequestError();
                 }
 
-                if (user.mfaEnabled !== true) {
+                if (true !== user.mfaEnabled) {
                     throw badRequestError(ERROR_MESSAGE.MFA_NOT_ENABLED);
                 }
 

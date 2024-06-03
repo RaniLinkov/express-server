@@ -9,7 +9,7 @@ const handler = (req, res, next) => {
         req.logger = req.logger.child(options);
     };
 
-    if (method !== "OPTIONS") {
+    if ("OPTIONS" !== method) {
         req.logger.info(`Start: ${method} to ${originalUrl}`);
 
         res.on("finish", () => {

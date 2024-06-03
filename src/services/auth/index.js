@@ -63,7 +63,7 @@ const verifyOtpCode = async (email, code, purpose) => {
         throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
     }
 
-    if (await utils.encryption.compare(code, otp.code) !== true) {
+    if (true !== await utils.encryption.compare(code, otp.code)) {
         await db.otps.update({email: otp.email}, {failedAttempts: otp.failedAttempts + 1});
         throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
     }
@@ -125,7 +125,7 @@ export default {
                     throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
                 }
 
-                if (speakeasy.totp.verify({secret: user.mfaSecret, encoding: BASE_32, token: code}) !== true) {
+                if (true !== speakeasy.totp.verify({secret: user.mfaSecret, encoding: BASE_32, token: code})) {
                     const mfaFailedAttempts = user.mfaFailedAttempts + 1;
 
                     await db.users.update({userId: user.userId}, {
@@ -164,7 +164,7 @@ export default {
                 throw tooManyAttemptsError();
             }
 
-            if (await utils.encryption.compare(password, user.password) !== true) {
+            if (true !== await utils.encryption.compare(password, user.password)) {
                 await db.users.update({userId: user.userId}, {
                     passwordFailedAttempts: user.passwordFailedAttempts + 1,
                     updatedAt: utils.time.now()
