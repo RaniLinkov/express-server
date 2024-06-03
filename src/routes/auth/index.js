@@ -1,8 +1,8 @@
 "use strict";
 
-import express from 'express';
+import {Router} from 'express';
 
-const router = express.Router();
+const router = Router();
 
 import auth from "../../controllers/auth/index.js";
 
