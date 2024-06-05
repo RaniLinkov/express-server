@@ -5,6 +5,7 @@ import utils from "../../utils.js";
 import services from "../../services/index.js";
 import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, forbiddenError, unauthorizedError} from "../../errors/index.js";
+import {ERROR_MESSAGE} from "../../errors/constants.js";
 
 const terminateUserSession = async (userId) => {
     const [session] = await services.sessions.read(undefined, userId);
