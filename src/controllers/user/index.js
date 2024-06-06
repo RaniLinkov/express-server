@@ -26,7 +26,7 @@ export default {
         validator: requestValidator({
             body: utils.joi.object({
                 name: utils.joi.schemas.user.name
-            })
+            }).required(),
         }),
         handler: async (req, res) => {
             if (!(await services.users.read(req.userId, undefined))) {
@@ -48,7 +48,7 @@ export default {
                 body: utils.joi.object({
                     currentPassword: utils.joi.schemas.user.password.required(),
                     newPassword: utils.joi.schemas.user.password.required()
-                })
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(req.userId, undefined);
@@ -79,7 +79,7 @@ export default {
             validator: requestValidator({
                 body: utils.joi.object({
                     code: utils.joi.schemas.otp.required(),
-                }),
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(req.userId, undefined);
@@ -103,7 +103,7 @@ export default {
             validator: requestValidator({
                 body: utils.joi.object({
                     code: utils.joi.schemas.otp.required(),
-                }),
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(req.userId, undefined);

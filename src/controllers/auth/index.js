@@ -40,7 +40,7 @@ export default {
                 email: utils.joi.schemas.user.email.required(),
                 password: utils.joi.schemas.user.password.required(),
                 name: utils.joi.schemas.user.name.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const [user] = await services.users.read(undefined, req.body.email);
@@ -59,7 +59,7 @@ export default {
             body: utils.joi.object({
                 email: utils.joi.schemas.user.email.required(),
                 password: utils.joi.schemas.user.password.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const [user] = await services.users.read(undefined, req.body.email);
@@ -126,7 +126,7 @@ export default {
             validator: requestValidator({
                 body: utils.joi.object({
                     email: utils.joi.schemas.user.email.required(),
-                }),
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(undefined, req.body.email);
@@ -153,7 +153,7 @@ export default {
                 body: utils.joi.object({
                     email: utils.joi.schemas.user.email.required(),
                     code: utils.joi.schemas.otp.required(),
-                }),
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(undefined, req.body.email);
@@ -178,7 +178,7 @@ export default {
                 validator: requestValidator({
                     body: utils.joi.object({
                         email: utils.joi.schemas.user.email.required()
-                    }),
+                    }).required(),
                 }),
                 handler: async (req, res) => {
                     const [user] = await services.users.read(undefined, req.body.email);
@@ -204,7 +204,7 @@ export default {
                         email: utils.joi.schemas.user.email.required(),
                         code: utils.joi.schemas.otp.required(),
                         password: utils.joi.schemas.user.password.required(),
-                    }),
+                    }).required(),
                 }),
                 handler: async (req, res) => {
                     const [user] = await services.users.read(undefined, req.body.email);
@@ -227,7 +227,7 @@ export default {
             validator: requestValidator({
                 body: utils.joi.object({
                     code: utils.joi.schemas.otp.required(),
-                }),
+                }).required(),
             }),
             handler: async (req, res) => {
                 const [user] = await services.users.read(req.userId, undefined);

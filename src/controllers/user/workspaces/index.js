@@ -11,7 +11,7 @@ export default {
         validator: requestValidator({
             body: utils.joi.object({
                 name: utils.joi.schemas.workspace.name.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const [workspace] = await services.workspaces.create(req.body.name);
@@ -25,7 +25,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 workspaceId: utils.joi.schemas.workspace.workspaceId.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const workspaces = await services.userWorkspaceMapping.readUserWorkspaces(req.userId, req.params.workspaceId);
@@ -37,10 +37,10 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 workspaceId: utils.joi.schemas.workspace.workspaceId.required(),
-            }),
+            }).required(),
             body: utils.joi.object({
                 name: utils.joi.schemas.workspace.name.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);
@@ -62,7 +62,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 workspaceId: utils.joi.schemas.workspace.workspaceId.required(),
-            })
+            }).required(),
         }),
         handler: async (req, res) => {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);
@@ -85,7 +85,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 workspaceId: utils.joi.schemas.workspace.workspaceId.required(),
-            })
+            }).required(),
         }),
         handler: async (req, res) => {
             const [userWorkspace] = await services.userWorkspaceMapping.readUserWorkspaces(req.userId, req.params.workspaceId);
@@ -103,7 +103,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 workspaceId: utils.joi.schemas.workspace.workspaceId.required(),
-            })
+            }).required(),
         }),
         handler: async (req, res) => {
             const [userWorkspaceMapping] = await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId);

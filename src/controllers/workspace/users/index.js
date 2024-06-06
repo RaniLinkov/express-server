@@ -11,7 +11,7 @@ export default {
             body: utils.joi.object({
                 email: utils.joi.schemas.user.email.required(),
                 role: utils.joi.schemas.userWorkspaceMapping.role.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const [user] = await services.users.read(undefined, req.body.email);
@@ -27,7 +27,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 userId: utils.joi.schemas.user.userId.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             const workspaces = await services.userWorkspaceMapping.readWorkspaceUsers(req.workspaceId, req.params.userId);
@@ -39,10 +39,10 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 userId: utils.joi.schemas.user.userId.required(),
-            }),
+            }).required(),
             body: utils.joi.object({
                 role: utils.joi.schemas.userWorkspaceMapping.role.required(),
-            }),
+            }).required(),
         }),
         handler: async (req, res) => {
             if (!(await services.userWorkspaceMapping.read(req.body.userId, req.workspaceId))) {
@@ -58,7 +58,7 @@ export default {
         validator: requestValidator({
             params: utils.joi.object({
                 userId: utils.joi.schemas.user.userId.required(),
-            })
+            }).required(),
         }),
         handler: async (req, res) => {
             if (!(await services.userWorkspaceMapping.read(req.userId, req.params.workspaceId))) {
