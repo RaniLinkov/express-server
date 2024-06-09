@@ -4,7 +4,7 @@ import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import services from "../../services/index.js";
 import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
-import {badRequestError, forbiddenError, unauthorizedError} from "../../errors/index.js";
+import {badRequestError, conflictError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 import {ERROR_MESSAGE} from "../../errors/constants.js";
 
 const terminateUserSession = async (userId) => {
@@ -46,7 +46,7 @@ export default {
             const [user] = await services.users.read(undefined, req.body.email);
 
             if (user) {
-                throw badRequestError();
+                throw conflictError();
             }
 
             await services.users.create(req.body.email, req.body.password, req.body.name);
