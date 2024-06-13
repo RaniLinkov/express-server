@@ -11,6 +11,7 @@ const getEnvVariable = (key, defaultValue = undefined) => {
 }
 
 const config = {
+    APP_NAME: getEnvVariable('APP_NAME', 'app name'),
     PORT: getEnvVariable('PORT', 3000),
     NODE_ENV: getEnvVariable('NODE_ENV', 'development'),
     ALLOWED_ORIGINS: getEnvVariable('ALLOWED_ORIGINS', EMPTY_STRING).split(','),

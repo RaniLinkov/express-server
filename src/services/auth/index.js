@@ -9,7 +9,7 @@ import mailer from "../../mailer/index.js";
 import {badRequestError, tooManyAttemptsError} from "../../errors/index.js";
 import {ERROR_MESSAGE} from "../../errors/constants.js";
 
-const APP_NAME = "app name";
+const APP_NAME = config.APP_NAME;
 
 const RS256 = "RS256";
 
