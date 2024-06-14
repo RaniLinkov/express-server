@@ -1,10 +1,11 @@
 {
-  "name": "node-server",
+  "name": "express-server",
   "version": "1.0.0",
-  "description": "node.js server",
+  "description": "express.js server",
   "main": "index.js",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon index.js"
+    "start:dev": "NODE_ENV=development nodemon index.js",
+    "start": "NODE_ENV=production node index.js"
   },
   "keywords": [],
   "author": "Rani Linkov",
