@@ -1,2 +1,2 @@
-# node-server
-node REST api server (JS)
+# express-server
+express REST api server (JS)
