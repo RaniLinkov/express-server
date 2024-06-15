@@ -1,9 +1,9 @@
 "use strict";
 
-import {initCache} from "./redis.js";
+import {init} from "./redis.js";
 import config from "../config/index.js";
 
-const cache = initCache(config.CACHE);
+const cache = init(config.CACHE);
 
 const get = (key) => {
     return cache.get(key);

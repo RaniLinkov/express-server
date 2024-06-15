@@ -2,6 +2,6 @@
 
 import knex from 'knex';
 
-export const initDb = (options) => {
+export const init = (options) => {
     return knex(options);
 };

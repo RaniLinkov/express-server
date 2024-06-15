@@ -2,6 +2,6 @@
 
 import {createClient} from 'redis';
 
-export const initCache = (options) => {
+export const init = (options) => {
     return createClient(options);
 }
