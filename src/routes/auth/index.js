@@ -6,8 +6,11 @@ const router = Router();
 
 import auth from "../../controllers/auth/index.js";
 
+import useragent from 'express-useragent';
+
 import accessTokenHandler from "../../middleware/accessTokenHandler.js";
 import mfaAccessTokenHandler from "../../middleware/mfaAccessTokenHandler.js";
+import useragentHandler from "../../middleware/useragentHandler.js";
 
 router.post('/sign-up',
     auth.signUp.validator,
@@ -16,6 +19,8 @@ router.post('/sign-up',
 
 router.post('/sign-in',
     auth.signIn.validator,
+    useragent.express(),
+    useragentHandler,
     auth.signIn.handler
 );
 
@@ -27,6 +32,8 @@ router.post('/mfa/verify',
 
 router.delete('/sign-out',
     accessTokenHandler,
+    useragent.express(),
+    useragentHandler,
     auth.signOut.handler
 );
 
@@ -53,7 +60,6 @@ router.post('/password/reset/verify',
     auth.password.reset.verify.validator,
     auth.password.reset.verify.handler
 );
-
 
 
 export default router;

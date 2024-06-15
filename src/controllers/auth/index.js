@@ -7,8 +7,20 @@ import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, conflictError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 import {ERROR_MESSAGE} from "../../errors/constants.js";
 
-const terminateUserSession = async (userId) => {
-    const [session] = await services.sessions.read(undefined, userId);
+const findUserDeviceId = async (userId, useragent) => {
+    const devices = await services.devices.read(userId);
+
+    return devices.find(device => {
+        return device.useragent.browser === useragent.browser &&
+            device.useragent.version === useragent.version &&
+            device.useragent.os === useragent.os &&
+            device.useragent.platform === useragent.platform &&
+            device.useragent.source === useragent.source;
+    })?.deviceId;
+};
+
+const terminateUserSession = async (userId, deviceId) => {
+    const [session] = await services.sessions.read(undefined, userId, deviceId);
 
     if (session) {
         await services.sessions.delete(session.sessionId, undefined);
@@ -16,8 +28,8 @@ const terminateUserSession = async (userId) => {
     }
 };
 
-const handleUserSessionCreation = async (userId) => {
-    const [session] = await services.sessions.create(userId);
+const handleUserSessionCreation = async (userId, deviceId) => {
+    const [session] = await services.sessions.create(userId, deviceId);
 
     return {
         accessToken: await services.auth.accessToken.sign({userId, sessionId: session.sessionId}),
@@ -25,10 +37,17 @@ const handleUserSessionCreation = async (userId) => {
     };
 };
 
-const handleSuccessfulSignIn = async (userId, res) => {
-    await terminateUserSession(userId);
+const handleSuccessfulSignIn = async (userId, useragent, res) => {
+    let deviceId = await findUserDeviceId(userId, useragent);
 
-    const {accessToken, refreshToken} = await handleUserSessionCreation(userId);
+    if (!deviceId) {
+        const [device] = await services.devices.create(userId, useragent);
+        deviceId = device.deviceId;
+    }
+
+    await terminateUserSession(userId, deviceId);
+
+    const {accessToken, refreshToken} = await handleUserSessionCreation(userId, deviceId);
 
     res.status(201).refreshToken.setCookie(refreshToken).items({accessToken});
 };
@@ -79,13 +98,15 @@ export default {
                     mfaAccessToken: await services.auth.mfa.accessToken.sign({userId: user.userId})
                 });
             } else {
-                await handleSuccessfulSignIn(user.userId, res);
+                await handleSuccessfulSignIn(user.userId, req.useragent, res);
             }
         }
     },
     signOut: {
         handler: async (req, res) => {
-            await terminateUserSession(req.userId);
+            const deviceId = await findUserDeviceId(req.userId, req.useragent);
+
+            await terminateUserSession(req.userId, deviceId);
 
             res.refreshToken.clearCookie().items();
         }
@@ -248,7 +269,7 @@ export default {
 
                 await services.auth.mfa.code.verify(user, req.body.code);
 
-                await handleSuccessfulSignIn(user.userId, res);
+                await handleSuccessfulSignIn(user.userId, req.useragent, res);
             }
         }
     }

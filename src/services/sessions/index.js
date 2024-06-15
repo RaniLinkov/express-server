@@ -4,22 +4,24 @@ import cache from "../../cache/index.js";
 import {TRUE_STRING} from "../../constants.js";
 
 export default {
-    create: (userId) => {
+    create: (userId, deviceId) => {
         const data = {};
 
         const now = utils.time.now();
 
         data.sessionId = utils.uuid.v4();
         data.userId = userId;
+        data.deviceId = deviceId;
         data.createdAt = now;
         data.expiresAt = utils.time.addDays(now, 7);
 
         return db.sessions.create(data);
     },
-    read: (sessionId, userId) => {
+    read: (sessionId, userId, deviceId) => {
         const filter = {};
         if (sessionId !== undefined) filter.sessionId = sessionId;
         if (userId !== undefined) filter.userId = userId;
+        if (deviceId !== undefined) filter.deviceId = deviceId;
 
         return db.sessions.read(filter);
     },
