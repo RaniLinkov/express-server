@@ -272,5 +272,36 @@ export default {
                 await handleSuccessfulSignIn(user.userId, req.useragent, res);
             }
         }
+    },
+    sessions: {
+        get: {
+            handler: async (req, res) => {
+                const sessions = await services.sessions.read(undefined, req.userId);
+
+                res.items(sessions);
+            }
+        },
+        delete: {
+            validator: requestValidator({
+                params: utils.joi.object({
+                    sessionId: utils.joi.schemas.session.sessionId.required(),
+                }).required(),
+            }),
+            handler: async (req, res) => {
+                const [session] = await services.sessions.read(req.params.sessionId);
+
+                if (!session) {
+                    throw badRequestError();
+                }
+
+                if (session.userId !== req.userId) {
+                    throw forbiddenError();
+                }
+
+                await services.sessions.delete(req.params.sessionId, undefined);
+
+                res.items();
+            }
+        }
     }
-};
+}

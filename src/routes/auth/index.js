@@ -27,14 +27,9 @@ router.post('/sign-in',
 router.post('/mfa/verify',
     mfaAccessTokenHandler,
     auth.mfa.verify.validator,
-    auth.mfa.verify.handler
-);
-
-router.delete('/sign-out',
-    accessTokenHandler,
     useragent.express(),
     useragentHandler,
-    auth.signOut.handler
+    auth.mfa.verify.handler
 );
 
 router.get('/token',
@@ -59,6 +54,23 @@ router.post('/password/reset/request-verification',
 router.post('/password/reset/verify',
     auth.password.reset.verify.validator,
     auth.password.reset.verify.handler
+);
+
+router.use(accessTokenHandler);
+
+router.delete('/sign-out',
+    useragent.express(),
+    useragentHandler,
+    auth.signOut.handler
+);
+
+router.get('/sessions',
+    auth.sessions.get.handler
+);
+
+router.delete('/sessions/:sessionId',
+    auth.sessions.delete.validator,
+    auth.sessions.delete.handler
 );
 
 
