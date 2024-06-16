@@ -217,6 +217,8 @@ export default {
 
                     await services.users.update(user.userId, {passwordFailedAttempts: 0, password: req.body.password});
 
+                    await terminateUserSession(user.userId);
+
                     res.items();
                 }
             }
