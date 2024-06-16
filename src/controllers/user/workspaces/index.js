@@ -113,7 +113,7 @@ export default {
             }
 
             return res
-                .refreshToken.setCookie(
+                .setRefreshTokenCookie(
                     await services.auth.refreshToken.sign({
                         sessionId: req.sessionId,
                         workspaceId: req.params.workspaceId,

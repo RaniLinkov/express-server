@@ -49,7 +49,7 @@ const handleSuccessfulSignIn = async (userId, useragent, res) => {
 
     const {accessToken, refreshToken} = await handleUserSessionCreation(userId, deviceId);
 
-    res.status(201).refreshToken.setCookie(refreshToken).items({accessToken});
+    res.status(201).setRefreshTokenCookie(refreshToken).items({accessToken});
 };
 
 export default {
@@ -108,7 +108,7 @@ export default {
 
             await terminateUserSessions(undefined, req.userId, deviceId);
 
-            res.refreshToken.clearCookie().items();
+            res.setRefreshTokenCookie("").items();
         }
     },
     token: {

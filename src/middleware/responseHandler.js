@@ -8,15 +8,12 @@ const handler = (req, res, next) => {
             items: Array.isArray(items) ? items : [items],
         });
 
-    res.refreshToken = {
-        setCookie: (token) =>
-            res.cookie(REFRESH_TOKEN_COOKIE, token, {
-                maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
-                httpOnly: true,
-                secure: true
-            }),
-        clearCookie: () => res.clearCookie(REFRESH_TOKEN_COOKIE)
-    }
+    res.setRefreshTokenCookie = (token) =>
+        res.cookie(REFRESH_TOKEN_COOKIE, token, {
+            maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
+            httpOnly: true,
+            secure: true
+        })
 
     return next();
 };
