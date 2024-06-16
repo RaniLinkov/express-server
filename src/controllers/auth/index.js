@@ -30,7 +30,7 @@ const handleSuccessfulSignIn = async (userId, res) => {
 
     const {accessToken, refreshToken} = await handleUserSessionCreation(userId);
 
-    res.status(201).refreshTokenCookie(refreshToken).items({accessToken});
+    res.status(201).refreshToken.setCookie(refreshToken).items({accessToken});
 };
 
 export default {
@@ -87,7 +87,7 @@ export default {
         handler: async (req, res) => {
             await terminateUserSession(req.userId);
 
-            res.refreshTokenCookie("").items();
+            res.refreshToken.clearCookie().items();
         }
     },
     token: {
