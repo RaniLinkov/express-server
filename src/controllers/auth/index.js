@@ -294,7 +294,7 @@ export default {
                     throw badRequestError();
                 }
 
-                if (session.userId !== req.userId) {
+                if (session.sessionId !== req.sessionId) {
                     throw forbiddenError();
                 }
 
