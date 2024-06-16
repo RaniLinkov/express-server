@@ -19,7 +19,7 @@ const findUserDeviceId = async (userId, useragent) => {
     })?.deviceId;
 };
 
-const terminateUserSession = async (sessionId, userId, deviceId) => {
+const terminateUserSessions = async (sessionId, userId, deviceId) => {
     const [session] = await services.sessions.read(sessionId, userId, deviceId);
 
     if (session) {
@@ -45,7 +45,7 @@ const handleSuccessfulSignIn = async (userId, useragent, res) => {
         deviceId = device.deviceId;
     }
 
-    await terminateUserSession(undefined, userId, deviceId);
+    await terminateUserSessions(undefined, userId, deviceId);
 
     const {accessToken, refreshToken} = await handleUserSessionCreation(userId, deviceId);
 
@@ -106,7 +106,7 @@ export default {
         handler: async (req, res) => {
             const deviceId = await findUserDeviceId(req.userId, req.useragent);
 
-            await terminateUserSession(undefined, req.userId, deviceId);
+            await terminateUserSessions(undefined, req.userId, deviceId);
 
             res.refreshToken.clearCookie().items();
         }
@@ -238,7 +238,7 @@ export default {
 
                     await services.users.update(user.userId, {passwordFailedAttempts: 0, password: req.body.password});
 
-                    await terminateUserSession(user.userId);
+                    await terminateUserSessions(undefined, user.userId);
 
                     res.items();
                 }
@@ -298,7 +298,7 @@ export default {
                     throw forbiddenError();
                 }
 
-                await terminateUserSession(session.sessionId);
+                await terminateUserSessions(session.sessionId);
 
                 res.items();
             }
