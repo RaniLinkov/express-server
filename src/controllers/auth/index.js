@@ -37,17 +37,24 @@ const handleUserSessionCreation = async (userId, deviceId) => {
     };
 };
 
-const handleSuccessfulSignIn = async (userId, useragent, res) => {
-    let deviceId = await findUserDeviceId(userId, useragent);
+const handleSuccessfulSignIn = async (user, req, res) => {
+    let deviceId = await findUserDeviceId(user.userId, req.useragent);
 
     if (!deviceId) {
-        const [device] = await services.devices.create(userId, useragent);
+        const [device] = await services.devices.create(user.userId, req.useragent);
+
+        services.auth.device.sendNewDeviceDetectedEmail(user.email, device).then(() => {
+            req.logger.info(`New device detected email sent to user ${user.email} for device ${device.deviceId}`);
+        }).catch((error) => {
+            req.logger.error(`Failed to send new device detected email to user ${user.email}: ${error.message}`);
+        });
+
         deviceId = device.deviceId;
     }
 
-    await terminateUserSessions(undefined, userId, deviceId);
+    await terminateUserSessions(undefined, user.userId, deviceId);
 
-    const {accessToken, refreshToken} = await handleUserSessionCreation(userId, deviceId);
+    const {accessToken, refreshToken} = await handleUserSessionCreation(user.userId, deviceId);
 
     res.status(201).setRefreshTokenCookie(refreshToken).items({accessToken});
 };
@@ -98,7 +105,7 @@ export default {
                     mfaAccessToken: await services.auth.mfa.accessToken.sign({userId: user.userId})
                 });
             } else {
-                await handleSuccessfulSignIn(user.userId, req.useragent, res);
+                await handleSuccessfulSignIn(user, req, res);
             }
         }
     },
@@ -269,7 +276,7 @@ export default {
 
                 await services.auth.mfa.code.verify(user, req.body.code);
 
-                await handleSuccessfulSignIn(user.userId, req.useragent, res);
+                await handleSuccessfulSignIn(user, req, res);
             }
         }
     },

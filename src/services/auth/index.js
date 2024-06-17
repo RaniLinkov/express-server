@@ -198,5 +198,15 @@ export default {
             );
         },
         verify: async (email, code) => verifyOtpCode(email, code, EMAIL_VERIFICATION)
+    },
+    device: {
+        sendNewDeviceDetectedEmail: (email, device) => {
+            return mailer.send(
+                email,
+                'New Device Detected',
+                `A new device was used to sign in to your account.`,
+                `A new device was used to sign in to your account. Device: <pre>${JSON.stringify(device.useragent, null, 4)}</pre>`
+            );
+        }
     }
 }
