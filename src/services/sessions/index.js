@@ -1,3 +1,5 @@
+"use strict";
+
 import utils from "../../utils.js";
 import db from "../../db/index.js";
 import cache from "../../cache/index.js";

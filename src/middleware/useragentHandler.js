@@ -1,3 +1,5 @@
+"use strict";
+
 const handler = async (req, res, next) => {
     req.useragent = {
         browser: req.useragent.browser,

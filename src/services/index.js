@@ -1,3 +1,5 @@
+"use strict";
+
 import users from './users/index.js';
 import sessions from './sessions/index.js';
 import auth from './auth/index.js';

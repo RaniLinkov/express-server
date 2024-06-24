@@ -1,3 +1,5 @@
+"use strict";
+
 import jsonwebtoken from "jsonwebtoken";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
