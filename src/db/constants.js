@@ -3,7 +3,6 @@
 export const TABLES = {
     USERS: 'users',
     SESSIONS: 'sessions',
-    DEVICES: 'devices',
     OTPS: 'otps',
     WORKSPACES: 'workspaces',
     USER_WORKSPACE_MAPPING: 'userWorkspaceMapping',

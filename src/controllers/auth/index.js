@@ -7,20 +7,8 @@ import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, conflictError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 import {ERROR_MESSAGE} from "../../errors/constants.js";
 
-const findUserDeviceId = async (userId, useragent) => {
-    const devices = await services.devices.read(userId);
-
-    return devices.find(device => {
-        return device.useragent.browser === useragent.browser &&
-            device.useragent.version === useragent.version &&
-            device.useragent.os === useragent.os &&
-            device.useragent.platform === useragent.platform &&
-            device.useragent.source === useragent.source;
-    })?.deviceId;
-};
-
-const terminateUserSessions = async (sessionId, userId, deviceId) => {
-    const [session] = await services.sessions.read(sessionId, userId, deviceId);
+const terminateUserSessions = async (sessionId, userId) => {
+    const [session] = await services.sessions.read(sessionId, userId);
 
     if (session) {
         await services.sessions.delete(session.sessionId);
@@ -28,8 +16,8 @@ const terminateUserSessions = async (sessionId, userId, deviceId) => {
     }
 };
 
-const handleUserSessionCreation = async (userId, deviceId) => {
-    const [session] = await services.sessions.create(userId, deviceId);
+const handleUserSessionCreation = async (userId) => {
+    const [session] = await services.sessions.create(userId);
 
     return {
         accessToken: await services.auth.accessToken.sign({userId, sessionId: session.sessionId}),
@@ -38,23 +26,9 @@ const handleUserSessionCreation = async (userId, deviceId) => {
 };
 
 const handleSuccessfulSignIn = async (user, req, res) => {
-    let deviceId = await findUserDeviceId(user.userId, req.useragent);
+    await terminateUserSessions(undefined, user.userId);
 
-    if (!deviceId) {
-        const [device] = await services.devices.create(user.userId, req.useragent);
-
-        services.auth.device.sendNewDeviceDetectedEmail(user.email, device).then(() => {
-            req.logger.info(`New device detected email sent to user ${user.email} for device ${device.deviceId}`);
-        }).catch((error) => {
-            req.logger.error(`Failed to send new device detected email to user ${user.email}: ${error.message}`);
-        });
-
-        deviceId = device.deviceId;
-    }
-
-    await terminateUserSessions(undefined, user.userId, deviceId);
-
-    const {accessToken, refreshToken} = await handleUserSessionCreation(user.userId, deviceId);
+    const {accessToken, refreshToken} = await handleUserSessionCreation(user.userId);
 
     res.status(201).setRefreshTokenCookie(refreshToken).items({accessToken});
 };
@@ -111,9 +85,7 @@ export default {
     },
     signOut: {
         handler: async (req, res) => {
-            const deviceId = await findUserDeviceId(req.userId, req.useragent);
-
-            await terminateUserSessions(undefined, req.userId, deviceId);
+            await terminateUserSessions(undefined, req.userId);
 
             res.setRefreshTokenCookie("").items();
         }

@@ -4,7 +4,6 @@ import {init} from './knex.js';
 import config from '../config/index.js';
 import {initUsersDal} from "./dals/usersDal.js";
 import {initSessionsDal} from "./dals/sessionsDal.js";
-import {initDevicesDal} from "./dals/devicesDal.js";
 import {initOtpsDal} from "./dals/otpsDal.js";
 import {initWorkspacesDal} from "./dals/workspacesDal.js";
 import {initUserWorkspaceMappingDal} from "./dals/userWorkspaceMappingDal.js";
@@ -20,7 +19,6 @@ export default {
     disconnect,
     users: initUsersDal(db),
     sessions: initSessionsDal(db),
-    devices: initDevicesDal(db),
     otps: initOtpsDal(db),
     workspaces: initWorkspacesDal(db),
     userWorkspaceMapping: initUserWorkspaceMappingDal(db)
