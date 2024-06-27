@@ -5,6 +5,14 @@ import db from "../../db/index.js";
 import cache from "../../cache/index.js";
 import {TRUE_STRING} from "../../constants.js";
 
+const createFilter = (sessionId, userId) => {
+    const filter = {};
+    if (sessionId !== undefined) filter.sessionId = sessionId;
+    if (userId !== undefined) filter.userId = userId;
+
+    return filter;
+};
+
 export default {
     create: (userId) => {
         const data = {};
@@ -19,16 +27,12 @@ export default {
         return db.sessions.create(data);
     },
     read: (sessionId, userId) => {
-        const filter = {};
-        if (sessionId !== undefined) filter.sessionId = sessionId;
-        if (userId !== undefined) filter.userId = userId;
+        const filter = createFilter(sessionId, userId);
 
         return db.sessions.read(filter);
     },
     delete: (sessionId, userId) => {
-        const filter = {};
-        if (sessionId !== undefined) filter.sessionId = sessionId;
-        if (userId !== undefined) filter.userId = userId;
+        const filter = createFilter(sessionId, userId);
 
         return db.sessions.delete(filter);
     },

@@ -3,6 +3,14 @@
 import utils from "../../utils.js";
 import db from "../../db/index.js";
 
+const createFilter = (userId, email) => {
+    const filter = {};
+    if (userId !== undefined) filter.userId = userId;
+    if (email !== undefined) filter.email = email;
+
+    return filter;
+};
+
 export default {
     create: async (email, password, name) => {
         const data = {};
@@ -25,9 +33,7 @@ export default {
         return db.users.create(data);
     },
     read: (userId, email) => {
-        const filter = {};
-        if (userId !== undefined) filter.userId = userId;
-        if (email !== undefined) filter.email = email;
+        const filter = createFilter(userId, email);
 
         return db.users.read(filter);
     },

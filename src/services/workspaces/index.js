@@ -3,6 +3,13 @@
 import utils from "../../utils.js";
 import db from "../../db/index.js";
 
+const createFilter = (workspaceId) => {
+    const filter = {};
+    if (workspaceId !== undefined) filter.workspaceId = workspaceId;
+
+    return filter;
+};
+
 export default {
     create: async (name) => {
         const data = {};
@@ -17,14 +24,20 @@ export default {
         return db.workspaces.create(data);
     },
     read: (workspaceId) => {
-        return db.workspaces.read({workspaceId});
+        const filter = createFilter(workspaceId);
+
+        return db.workspaces.read(filter);
     },
     update: (workspaceId, data) => {
+        const filter = createFilter(workspaceId);
+
         data.updatedAt = utils.time.now();
 
-        return db.workspaces.update({workspaceId}, data);
+        return db.workspaces.update(filter, data);
     },
     delete: (workspaceId) => {
-        return db.workspaces.delete({workspaceId});
+        const filter = createFilter(workspaceId);
+
+        return db.workspaces.delete(filter);
     }
 }
