@@ -38,12 +38,14 @@ export default {
         return db.users.read(filter);
     },
     update: async (userId, data) => {
+        const filter = createFilter(userId);
+
         if (data.password) {
             data.password = await utils.encryption.hash(data.password);
         }
 
         data.updatedAt = utils.time.now();
 
-        return db.users.update({userId}, data);
+        return db.users.update(filter, data);
     },
 }
