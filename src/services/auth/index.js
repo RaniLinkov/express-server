@@ -29,48 +29,49 @@ const BASE_32 = "base32";
 const EMAIL_VERIFICATION = 'emailVerification';
 const PASSWORD_RESET = 'passwordReset';
 
-const generateOtpCode = async (email, purpose) => {
-    const [otp] = await db.otps.read({email, purpose});
+const otpHelper = {
+    generate: async (email, purpose) => {
+        const [otp] = await db.otps.read({email, purpose});
 
-    if (otp) {
-        if (utils.time.now() < otp.expiresAt) {
-            throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
+        if (otp) {
+            if (utils.time.now() < otp.expiresAt) {
+                throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
+            }
+
+            await db.otps.delete({email, purpose});
         }
 
-        await db.otps.delete({email, purpose});
+        const code = utils.otp.generate();
+
+        const now = utils.time.now();
+
+        const data = {
+            email,
+            purpose,
+            code: await utils.encryption.hash(code),
+            failedAttempts: 0,
+            createdAt: now,
+            expiresAt: utils.time.addMinutes(now, 5)
+        };
+
+        await db.otps.create(data);
+
+        return code;
+    },
+    verify: async (email, code, purpose) => {
+        const [otp] = await db.otps.read({email, purpose});
+
+        if (!otp || utils.time.now() > otp.expiresAt || otp.failedAttempts > MFA_FAILED_ATTEMPTS_LIMIT) {
+            throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
+        }
+
+        if (true !== await utils.encryption.compare(code, otp.code)) {
+            await db.otps.update({email: otp.email}, {failedAttempts: otp.failedAttempts + 1});
+            throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
+        }
+
+        await db.otps.delete({email: otp.email, purpose});
     }
-
-    const code = utils.otp.generate();
-
-    const now = utils.time.now();
-
-    const data = {
-        email,
-        purpose,
-        code: await utils.encryption.hash(code),
-        failedAttempts: 0,
-        createdAt: now,
-        expiresAt: utils.time.addMinutes(now, 5)
-    };
-
-    await db.otps.create(data);
-
-    return code;
-};
-
-const verifyOtpCode = async (email, code, purpose) => {
-    const [otp] = await db.otps.read({email, purpose});
-
-    if (!otp || utils.time.now() > otp.expiresAt || otp.failedAttempts > MFA_FAILED_ATTEMPTS_LIMIT) {
-        throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
-    }
-
-    if (true !== await utils.encryption.compare(code, otp.code)) {
-        await db.otps.update({email: otp.email}, {failedAttempts: otp.failedAttempts + 1});
-        throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
-    }
-
-    await db.otps.delete({email: otp.email, purpose});
 };
 
 const jwt = {
@@ -93,6 +94,40 @@ const jwt = {
                 resolve({payload});
             }),
         ),
+};
+
+const passwordHelper = {
+    failedAttempts: {
+        increment: async (user) => {
+            await db.users.update({userId: user.userId}, {
+                passwordFailedAttempts: user.passwordFailedAttempts + 1,
+                updatedAt: utils.time.now()
+            });
+        },
+        reset: (user) => db.users.update({userId: user.userId}, {
+            passwordFailedAttempts: 0,
+            updatedAt: utils.time.now()
+        })
+    }
+};
+
+const mfaHelper = {
+    failedAttempts: {
+        increment: async (user) => {
+            const mfaFailedAttempts = user.mfaFailedAttempts + 1;
+
+            await db.users.update({userId: user.userId}, {
+                mfaFailedAttempts,
+                updatedAt: utils.time.now(),
+                ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT ? {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)} : {})
+            });
+        },
+        reset: (user) => db.users.update({userId: user.userId}, {
+            mfaFailedAttempts: 0,
+            mfaLockedUntil: null,
+            updatedAt: utils.time.now()
+        })
+    }
 };
 
 export default {
@@ -128,22 +163,12 @@ export default {
                 }
 
                 if (true !== speakeasy.totp.verify({secret: user.mfaSecret, encoding: BASE_32, token: code})) {
-                    const mfaFailedAttempts = user.mfaFailedAttempts + 1;
-
-                    await db.users.update({userId: user.userId}, {
-                        mfaFailedAttempts,
-                        updatedAt: utils.time.now(),
-                        ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT ? {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)} : {})
-                    });
+                    await mfaHelper.failedAttempts.increment(user);
 
                     throw badRequestError(ERROR_MESSAGE.INVALID_CODE);
                 }
 
-                await db.users.update({userId: user.userId}, {
-                    mfaFailedAttempts: 0,
-                    mfaLockedUntil: null,
-                    updatedAt: utils.time.now()
-                });
+                await mfaHelper.failedAttempts.reset(user);
             }
         },
         setup: {
@@ -167,17 +192,14 @@ export default {
             }
 
             if (true !== await utils.encryption.compare(password, user.password)) {
-                await db.users.update({userId: user.userId}, {
-                    passwordFailedAttempts: user.passwordFailedAttempts + 1,
-                    updatedAt: utils.time.now()
-                });
+                await passwordHelper.failedAttempts.increment(user);
                 throw badRequestError(ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD);
             }
 
-            await db.users.update({userId: user.userId}, {passwordFailedAttempts: 0, updatedAt: utils.time.now()});
+            await passwordHelper.failedAttempts.reset(user);
         },
         reset: {
-            generateVerificationCode: (email) => generateOtpCode(email, PASSWORD_RESET),
+            generateVerificationCode: (email) => otpHelper.generate(email, PASSWORD_RESET),
             sendVerificationEmail: (email, code) => {
                 return mailer.send(
                     email,
@@ -186,11 +208,11 @@ export default {
                     `Your OTP Code is: <b>${code}</b>`
                 );
             },
-            verify: (email, code) => verifyOtpCode(email, code, PASSWORD_RESET),
+            verify: (email, code) => otpHelper.verify(email, code, PASSWORD_RESET),
         }
     },
     email: {
-        generateVerificationCode: (email) => generateOtpCode(email, EMAIL_VERIFICATION),
+        generateVerificationCode: (email) => otpHelper.generate(email, EMAIL_VERIFICATION),
         sendVerificationEmail: (email, code) => {
             return mailer.send(
                 email,
@@ -199,6 +221,6 @@ export default {
                 `Your OTP Code is: <b>${code}</b>`
             );
         },
-        verify: async (email, code) => verifyOtpCode(email, code, EMAIL_VERIFICATION)
+        verify: async (email, code) => otpHelper.verify(email, code, EMAIL_VERIFICATION)
     },
 }
