@@ -31,14 +31,16 @@ const PASSWORD_RESET = 'passwordReset';
 
 const otpHelper = {
     generate: async (email, purpose) => {
-        const [otp] = await db.otps.read({email, purpose});
+        const filter = {email, purpose};
+
+        const [otp] = await db.otps.read(filter);
 
         if (otp) {
             if (utils.time.now() < otp.expiresAt) {
                 throw tooManyAttemptsError(ERROR_MESSAGE.TRY_AGAIN_LATER);
             }
 
-            await db.otps.delete({email, purpose});
+            await db.otps.delete(filter);
         }
 
         const code = utils.otp.generate();
@@ -59,18 +61,20 @@ const otpHelper = {
         return code;
     },
     verify: async (email, code, purpose) => {
-        const [otp] = await db.otps.read({email, purpose});
+        const filter = {email, purpose};
+
+        const [otp] = await db.otps.read(filter);
 
         if (!otp || utils.time.now() > otp.expiresAt || otp.failedAttempts > MFA_FAILED_ATTEMPTS_LIMIT) {
             throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
         }
 
         if (true !== await utils.encryption.compare(code, otp.code)) {
-            await db.otps.update({email: otp.email}, {failedAttempts: otp.failedAttempts + 1});
+            await db.otps.update(filter, {failedAttempts: otp.failedAttempts + 1});
             throw badRequestError(ERROR_MESSAGE.INVALID_OTP);
         }
 
-        await db.otps.delete({email: otp.email, purpose});
+        await db.otps.delete(filter);
     }
 };
 
