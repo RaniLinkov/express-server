@@ -58,12 +58,20 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 // region Initialization
 const initDb = () => {
     logger.info('Connecting to the database...');
-    return db.connect().then(() => logger.info('Connected to the database.'));
+    return db.connect().then(() => logger.info('Connected to the database.')).catch((err) => {
+        logger.error(`Failed to connect to database: ${err}`);
+
+        throw err;
+    });
 };
 
 const initCache = () => {
     logger.info('Connecting to the cache...');
-    return cache.connect().then(() => logger.info('Connected to the cache.'));
+    return cache.connect().then(() => logger.info('Connected to the cache.')).catch((err) => {
+        logger.error(`Failed to connect to cache: ${err}`);
+
+        throw err;
+    });
 };
 // endregion
 
