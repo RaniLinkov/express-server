@@ -123,7 +123,7 @@ const mfaHelper = {
             await db.users.update({userId: user.userId}, {
                 mfaFailedAttempts,
                 updatedAt: utils.time.now(),
-                ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT ? {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)} : {})
+                ...(mfaFailedAttempts > MFA_FAILED_ATTEMPTS_LIMIT && {mfaLockedUntil: utils.time.addMinutes(MFA_LOCK_DURATION_IN_MINUTES)})
             });
         },
         reset: (user) => db.users.update({userId: user.userId}, {
