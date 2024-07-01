@@ -29,6 +29,28 @@ const BASE_32 = "base32";
 const EMAIL_VERIFICATION = 'emailVerification';
 const PASSWORD_RESET = 'passwordReset';
 
+const jwt = {
+    sign: (payload, secret, options = {}) =>
+        new Promise((resolve, reject) =>
+            jsonwebtoken.sign(payload, secret, options, (err, token) =>
+                err ? reject(err) : resolve(token),
+            ),
+        ),
+    verify: (token, secret, options = {}) =>
+        new Promise((resolve) =>
+            jsonwebtoken.verify(token, secret, options, (err, payload) => {
+                if (err) {
+                    resolve({
+                        payload: null,
+                        expired: err instanceof jsonwebtoken.TokenExpiredError,
+                    });
+                }
+
+                resolve({payload});
+            }),
+        ),
+};
+
 const otpHelper = {
     generate: async (email, purpose) => {
         const filter = {email, purpose};
@@ -76,28 +98,6 @@ const otpHelper = {
 
         await db.otps.delete(filter);
     }
-};
-
-const jwt = {
-    sign: (payload, secret, options = {}) =>
-        new Promise((resolve, reject) =>
-            jsonwebtoken.sign(payload, secret, options, (err, token) =>
-                err ? reject(err) : resolve(token),
-            ),
-        ),
-    verify: (token, secret, options = {}) =>
-        new Promise((resolve) =>
-            jsonwebtoken.verify(token, secret, options, (err, payload) => {
-                if (err) {
-                    resolve({
-                        payload: null,
-                        expired: err instanceof jsonwebtoken.TokenExpiredError,
-                    });
-                }
-
-                resolve({payload});
-            }),
-        ),
 };
 
 const passwordHelper = {
