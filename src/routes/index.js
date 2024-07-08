@@ -15,7 +15,9 @@ router
     .use('/auth', auth)
     .use(accessTokenHandler)
     .use('/user', user)
-    .use(workspaceHandler)
-    .use('/workspace', workspace);
+    .use('/workspace',
+        workspaceHandler,
+        workspace
+    );
 
 export default router;
