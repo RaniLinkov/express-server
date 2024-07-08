@@ -49,17 +49,18 @@ router.post('/password/reset/verify',
     auth.password.reset.verify.handler
 );
 
-router.use(accessTokenHandler);
-
 router.delete('/sign-out',
+    accessTokenHandler,
     auth.signOut.handler
 );
 
 router.get('/sessions',
+    accessTokenHandler,
     auth.sessions.get.handler
 );
 
 router.delete('/sessions/:sessionId',
+    accessTokenHandler,
     auth.sessions.delete.validator,
     auth.sessions.delete.handler
 );
