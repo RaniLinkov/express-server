@@ -13,6 +13,7 @@ router.get('/',
 );
 
 router.put('/',
+    user.put.validator,
     user.put.handler
 );
 
