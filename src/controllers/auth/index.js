@@ -3,7 +3,7 @@
 import requestValidator from "../../middleware/requestValidator.js";
 import utils from "../../utils.js";
 import services from "../../services/index.js";
-import {REFRESH_TOKEN_COOKIE} from "../../constants.js";
+import {EMPTY_STRING, REFRESH_TOKEN_COOKIE} from "../../constants.js";
 import {badRequestError, conflictError, forbiddenError, unauthorizedError} from "../../errors/index.js";
 import {ERROR_MESSAGE} from "../../errors/constants.js";
 
@@ -87,7 +87,7 @@ export default {
         handler: async (req, res) => {
             await terminateUserSessions(undefined, req.userId);
 
-            res.setRefreshTokenCookie("").items();
+            res.setRefreshTokenCookie(EMPTY_STRING).items();
         }
     },
     token: {
@@ -102,12 +102,14 @@ export default {
                 const {payload} = await services.auth.refreshToken.verify(refreshToken);
 
                 if (null === payload || true === await services.sessions.isBlackListed(payload.sessionId)) {
+                    res.setRefreshTokenCookie(EMPTY_STRING);
                     throw unauthorizedError();
                 }
 
                 const [session] = await services.sessions.read(payload.sessionId);
 
                 if (!session) {
+                    res.setRefreshTokenCookie(EMPTY_STRING);
                     throw badRequestError();
                 }
 
