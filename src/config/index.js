@@ -20,6 +20,9 @@ const config = {
         connection: {
             host: getEnvVariable('DB_HOST', '127.0.0.1'),
             port: getEnvVariable('DB_PORT', '5432'),
+            user: getEnvVariable('DB_USER', 'postgres'),
+            password: getEnvVariable('DB_PASSWORD', 'mysecretpassword'),
+            database: getEnvVariable('DB_NAME', 'postgres'),
         },
         pool: {
             min: parseInt(getEnvVariable('DB_POOL_MIN', '2')),
@@ -27,9 +30,8 @@ const config = {
         },
     },
     CACHE: {
-        host: getEnvVariable('CACHE_HOST', null),
-        port: getEnvVariable('CACHE_PORT', null),
-        password: getEnvVariable('CACHE_PASSWORD', null)
+        host: getEnvVariable('CACHE_HOST', '127.0.0.1'),
+        port: getEnvVariable('CACHE_PORT', 6379),
     },
     PRIVATE_KEY: getEnvVariable('PRIVATE_KEY'),
     PUBLIC_KEY: getEnvVariable('PUBLIC_KEY'),
