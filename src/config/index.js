@@ -19,7 +19,7 @@ const config = {
         client: 'pg',
         connection: {
             host: getEnvVariable('DB_HOST', '127.0.0.1'),
-            port: getEnvVariable('DB_PORT', '5433'),
+            port: getEnvVariable('DB_PORT', '5432'),
         },
         pool: {
             min: parseInt(getEnvVariable('DB_POOL_MIN', '2')),
