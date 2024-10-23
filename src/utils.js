@@ -45,30 +45,30 @@ const uuid = {
 };
 
 const time = {
-    now: () => new Date(),
+    now: () => (new Date()).toISOString(),
     addMilliseconds: (date, ms) => {
         date.setMilliseconds(date.getMilliseconds() + ms);
-        return date;
+        return date.toISOString();
     },
     addSeconds: (date, seconds) => {
         date.setSeconds(date.getSeconds() + seconds);
-        return date;
+        return date.toISOString();
     },
     addMinutes: (date, minutes) => {
         date.setMinutes(date.getMinutes() + minutes);
-        return date;
+        return date.toISOString();
     },
     addHours: (date, hours) => {
         date.setHours(date.getHours() + hours);
-        return date;
+        return date.toISOString();
     },
     addDays: (date, days) => {
         date.setDate(date.getDate() + days);
-        return date;
+        return date.toISOString();
     },
     addMonths: (date, months) => {
         date.setMonth(date.getMonth() + months);
-        return date;
+        return date.toISOString();
     }
 };
 
