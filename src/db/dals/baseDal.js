@@ -8,13 +8,13 @@ export const initBaseDal = (knex, tableName) => {
             return knex(tableName).insert(camelToSnake(data)).returning("*").then(snakeToCamel);
         },
         read: (filter = {}) => {
-            return knex(tableName).where(filter).then(snakeToCamel);
+            return knex(tableName).where(camelToSnake(filter)).then(snakeToCamel);
         },
         update: (filter, data) => {
-            return knex(tableName).where(filter).update(camelToSnake(data)).returning("*").then(snakeToCamel);
+            return knex(tableName).where(camelToSnake(filter)).update(camelToSnake(data)).returning("*").then(snakeToCamel);
         },
         delete: (filter) => {
-            return knex(tableName).where(filter).del().returning("*").then(snakeToCamel);
+            return knex(tableName).where(camelToSnake(filter)).del().returning("*").then(snakeToCamel);
         }
     }
 };
